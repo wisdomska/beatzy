@@ -1,0 +1,1265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Beatzy — Feel the Beat</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://api.fontshare.com" />
+  <link href="https://api.fontshare.com/v2/css?f[]=clash-display@400,500,600,700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ─── Reset ─────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: #111;
+      color: #fff;
+      overflow-x: hidden;
+      font-family: 'Clash Display', sans-serif;
+    }
+    img { display: block; }
+    a { text-decoration: none; color: inherit; }
+
+    /* ─── CSS Variables ──────────────────────────────────────────── */
+    :root {
+      --pink:    #ef018c;
+      --purple:  #b201ba;
+      --pink2:   #f60190;
+      --purple2: #a103a9;
+      --dark:    #111;
+      --ddd:     #ddd;
+      --white10: rgba(255,255,255,0.10);
+      --white20: rgba(255,255,255,0.20);
+      --dark10:  rgba(17,17,17,0.10);
+      --dark50:  rgba(17,17,17,0.50);
+    }
+
+    /* ─── Glass Helpers ──────────────────────────────────────────── */
+    .glass-2  { backdrop-filter: blur(2px);  -webkit-backdrop-filter: blur(2px);  }
+    .glass-10 { backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
+    .glass-50 { backdrop-filter: blur(50px); -webkit-backdrop-filter: blur(50px); }
+
+    /* ─── Typography Helpers ─────────────────────────────────────── */
+    .font-electric { font-family: 'Orbitron', sans-serif; }
+    .font-clash    { font-family: 'Clash Display', sans-serif; }
+
+    .gradient-text {
+      background: linear-gradient(90deg, var(--pink) 0%, var(--purple) 100%);
+      -webkit-background-clip: text; background-clip: text;
+      -webkit-text-fill-color: transparent; color: transparent;
+    }
+    .gradient-text-pink {
+      background: linear-gradient(90deg, var(--pink2) 0%, var(--purple2) 100%);
+      -webkit-background-clip: text; background-clip: text;
+      -webkit-text-fill-color: transparent; color: transparent;
+    }
+
+    /* ─── Scrollbar ──────────────────────────────────────────────── */
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: #111; }
+    ::-webkit-scrollbar-thumb { background: var(--pink); border-radius: 2px; }
+
+    /* ════════════════════════════════════════════════════════════════
+       NAVIGATION
+    ════════════════════════════════════════════════════════════════ */
+    #nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      background: rgba(17,17,17,0.15);
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    .nav-inner {
+      max-width: 1440px; margin: 0 auto;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 80px; padding: 0 100px;
+    }
+    .nav-logo img { height: 23px; width: auto; }
+
+    .nav-menu { display: flex; align-items: center; }
+    .nav-menu a {
+      font-family: 'Clash Display', sans-serif;
+      font-weight: 500; font-size: 16px; padding: 8px 16px;
+      color: rgba(255,255,255,0.9);
+      transition: color 0.2s;
+    }
+    .nav-menu a:hover { color: #fff; }
+    .nav-menu a.active { font-weight: 600; text-decoration: underline; color: #fff; }
+
+    .nav-actions { display: flex; gap: 12px; align-items: center; }
+    .btn-glass {
+      height: 48px; padding: 0 24px;
+      border-radius: 100px;
+      font-family: 'Orbitron', sans-serif; font-size: 16px; letter-spacing: 1px;
+      cursor: pointer; border: 1px solid var(--white20);
+      transition: all 0.2s;
+    }
+    .btn-glass-dark {
+      background: var(--white10); color: #fff;
+    }
+    .btn-glass-dark:hover { background: rgba(255,255,255,0.18); }
+    .btn-glass-white {
+      background: rgba(255,255,255,0.80); color: #111;
+    }
+    .btn-glass-white:hover { background: rgba(255,255,255,0.95); }
+
+    /* ════════════════════════════════════════════════════════════════
+       HERO SECTION
+    ════════════════════════════════════════════════════════════════ */
+    .hero-section {
+      position: relative; width: 100%; height: 1270px;
+      overflow: hidden; margin-top: 0;
+    }
+    .hero-bg {
+      position: absolute; inset: 0; width: 100%; height: 100%;
+      object-fit: cover; object-position: center;
+    }
+    .hero-overlay {
+      position: absolute; inset: 0; width: 100%; height: 100%;
+      object-fit: cover; object-position: center;
+      pointer-events: none;
+    }
+    .hero-earbud {
+      position: absolute;
+      left: 50%; transform: translateX(-50%);
+      top: 342px; width: 689px; height: 587px;
+      object-fit: cover;
+      z-index: 2;
+    }
+    .hero-text-container {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: flex-start;
+      padding-top: 100px;
+      z-index: 3;
+    }
+    .hero-headline-wrap {
+      position: relative; text-align: center; width: 100%;
+    }
+    .hero-title {
+      font-family: 'Clash Display', sans-serif;
+      font-weight: 700;
+      font-size: 180px; line-height: 1.4;
+      color: transparent;
+      -webkit-text-stroke: 1.5px rgba(255,255,255,0.12);
+      text-transform: uppercase;
+      letter-spacing: -2px;
+      pointer-events: none;
+    }
+    .hero-subtitle {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 80px; line-height: normal;
+      letter-spacing: 3.2px;
+      color: #111;
+      position: absolute;
+      top: 239px; left: 50%; transform: translateX(-50%);
+      white-space: nowrap;
+      z-index: 1;
+    }
+
+    /* ════════════════════════════════════════════════════════════════
+       SECTION SPACING + WRAPPER
+    ════════════════════════════════════════════════════════════════ */
+    .page-wrapper {
+      display: flex; flex-direction: column;
+      align-items: center; gap: 200px;
+      padding-bottom: 0;
+    }
+    .section-full { width: 100%; }
+    .section-inner { max-width: 1440px; margin: 0 auto; }
+
+    /* Section headers */
+    .section-header {
+      display: flex; flex-direction: column;
+      align-items: center; gap: 8px;
+      text-align: center; padding: 0 100px;
+    }
+    .section-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 48px; line-height: 1.4;
+      letter-spacing: 0.48px;
+      white-space: nowrap;
+    }
+    .section-subtitle {
+      font-family: 'Clash Display', sans-serif;
+      font-weight: 500; font-size: 16px;
+      color: var(--ddd); letter-spacing: 0.16px;
+    }
+
+    /* ════════════════════════════════════════════════════════════════
+       PRODUCT FEATURES SECTION
+    ════════════════════════════════════════════════════════════════ */
+    .features-section {
+      display: flex; flex-direction: column;
+      align-items: center; gap: 40px; width: 100%;
+    }
+    .features-grid-wrapper {
+      position: relative; width: 1240px; height: 872px;
+      margin: 0 auto;
+    }
+    .feature-card {
+      position: absolute; border-radius: 24px;
+      overflow: hidden;
+    }
+    .feature-card .fc-bg {
+      position: absolute; inset: 0;
+      object-fit: cover; width: 100%; height: 100%;
+      border-radius: 24px;
+    }
+    .feature-card .fc-overlay {
+      position: absolute; inset: 0;
+      background: #111; border-radius: 24px;
+    }
+    .feature-card .fc-texts {
+      position: absolute; top: 40px;
+      display: flex; flex-direction: column; gap: 16px;
+    }
+    .feature-card .fc-texts.left  { left: 40px; }
+    .feature-card .fc-texts.right { right: 40px; }
+    .fc-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 32px; font-weight: 600;
+      line-height: 1.1; letter-spacing: 0.32px;
+      color: #fff;
+    }
+    .fc-desc {
+      font-family: 'Clash Display', sans-serif;
+      font-weight: 500; font-size: 16px;
+      line-height: 1.4; letter-spacing: 0.16px;
+      color: #fff;
+    }
+
+    /* Individual feature cards - matching original positions */
+    /* card A: pink/comfort — 0,0 924×240 */
+    .fc-a { left: 0; top: 0; width: 924px; height: 240px;
+      background: linear-gradient(180deg, #dd69c1 1%, #de66c2 53%, #da64c4 99%); }
+    .fc-a .fc-texts { left: 40px; top: 68px; width: 400px; }
+    .fc-a-image { position: absolute; right: -1px; top: 50%; transform: translateY(-50%);
+      width: 608px; height: 647px; object-fit: cover; }
+    /* card B: clean white — 0,264 292×608 */
+    .fc-b { left: 0; top: 264px; width: 292px; height: 608px; }
+    .fc-b .fc-texts { left: 24px; top: 40px; width: 244px; }
+    /* card C: noise isolation — 315,264 609×343 */
+    .fc-c { left: 315px; top: 264px; width: 609px; height: 343px; }
+    .fc-c .fc-texts { left: 40px; top: 40px; width: 172px; }
+    /* card D: extended stem — 316,632 924×240 */
+    .fc-d { left: 316px; top: 632px; width: 924px; height: 240px; }
+    .fc-d-stem { position: absolute; right: 0; top: 50%; transform: translateY(-50%);
+      width: 367px; height: 240px; object-fit: cover; }
+    .fc-d .fc-texts { left: 40px; top: 68px; width: 480px; }
+    /* card E: classic black — 948,0 292×608 */
+    .fc-e { left: 948px; top: 0; width: 292px; height: 608px; }
+    .fc-e .fc-texts { left: 24px; top: 40px; width: 244px; }
+
+    /* Shop Now button */
+    .btn-shop {
+      display: flex; align-items: center; justify-content: center;
+      width: 200px; height: 48px;
+      padding: 12px 24px;
+      border-radius: 100px;
+      background: rgba(255,255,255,0.8);
+      border: 1px solid var(--white20);
+      font-family: 'Orbitron', sans-serif; font-size: 16px;
+      letter-spacing: 1px; color: #111;
+      cursor: pointer; transition: all 0.2s;
+      text-transform: uppercase;
+    }
+    .btn-shop:hover { background: rgba(255,255,255,0.95); }
+
+    /* ════════════════════════════════════════════════════════════════
+       SPONSORS SECTION
+    ════════════════════════════════════════════════════════════════ */
+    .sponsors-section {
+      width: 100%; padding: 0;
+    }
+    .sponsors-label {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 24px; letter-spacing: 0.24px;
+      text-align: center; color: #fff;
+      margin-bottom: 24px; text-transform: uppercase;
+    }
+    .sponsors-ticker-wrap { overflow: hidden; width: 100%; }
+    @keyframes ticker-scroll {
+      0%   { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+    .sponsors-ticker-track {
+      display: flex; align-items: center; gap: 100px;
+      width: max-content;
+      animation: ticker-scroll 35s linear infinite;
+      padding: 24px 100px;
+    }
+    .sponsors-ticker-track:hover { animation-play-state: paused; }
+    .sponsor-logo { height: 40px; width: auto; object-fit: contain; filter: brightness(0.7); transition: filter 0.2s; }
+    .sponsor-logo:hover { filter: brightness(1); }
+
+    /* ════════════════════════════════════════════════════════════════
+       PRODUCTS / CUSTOMER FAVORITES
+    ════════════════════════════════════════════════════════════════ */
+    .products-section {
+      display: flex; flex-direction: column;
+      align-items: center; gap: 40px; width: 100%;
+    }
+    .products-carousel-wrap {
+      width: 100%; overflow: hidden;
+      display: flex; flex-direction: column; gap: 24px;
+      align-items: center;
+    }
+    .products-track-container {
+      width: 100%; overflow: hidden;
+    }
+    .products-track {
+      display: flex; gap: 24px;
+      padding: 0 100px;
+      transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    .product-card {
+      flex-shrink: 0; width: 292px; height: 400px;
+      display: flex; flex-direction: column; gap: 16px;
+      padding: 8px 8px 16px 8px;
+      border-radius: 24px;
+      background: rgba(17,17,17,0.10);
+      border: 1px solid var(--white20);
+      overflow: hidden;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      cursor: pointer;
+    }
+    .product-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 20px 50px rgba(239,1,140,0.18);
+    }
+    .product-img-wrap {
+      background: var(--white10);
+      border-radius: 16px; overflow: hidden;
+      width: 100%;
+      flex-shrink: 0;
+    }
+    .product-img-wrap img {
+      width: 100%; height: 240px;
+      object-fit: cover; border-radius: 16px;
+      border: 1px solid rgba(255,255,255,0.25);
+    }
+    .product-details {
+      display: flex; flex-direction: column;
+      justify-content: space-between;
+      flex: 1; padding: 0 8px;
+    }
+    .product-texts { display: flex; flex-direction: column; gap: 12px; }
+    .product-name {
+      font-family: 'Clash Display', sans-serif;
+      font-weight: 600; font-size: 16px;
+      line-height: 1.4; letter-spacing: 0.16px; color: #fff;
+    }
+    .product-desc {
+      font-family: 'Clash Display', sans-serif;
+      font-weight: 500; font-size: 14px;
+      line-height: 1.2; letter-spacing: 0.14px;
+      color: var(--ddd);
+    }
+    .product-footer {
+      display: flex; align-items: center;
+      justify-content: space-between;
+    }
+    .product-price {
+      display: flex; align-items: flex-end; gap: 6px;
+      font-size: 24px; letter-spacing: 0.24px;
+    }
+    .product-currency {
+      font-family: 'Clash Display', sans-serif;
+      font-weight: 400; color: var(--ddd); line-height: 1;
+    }
+    .product-amount {
+      font-family: 'Clash Display', sans-serif;
+      font-weight: 600; color: #fff; line-height: 1;
+    }
+    .product-cart-btn {
+      width: 40px; height: 40px; border-radius: 100px;
+      display: flex; align-items: center; justify-content: center;
+      background: var(--white10); border: 1px solid var(--white20);
+      overflow: hidden; cursor: pointer; transition: all 0.2s;
+    }
+    .product-cart-btn:hover { background: rgba(255,255,255,0.2); }
+    .product-cart-btn img { width: 24px; height: 24px; }
+
+    /* Carousel nav arrows */
+    .carousel-arrows {
+      display: flex; gap: 12px; align-items: center;
+    }
+    .carousel-arrow {
+      width: 48px; height: 48px; border-radius: 100px;
+      display: flex; align-items: center; justify-content: center;
+      background: var(--white10); border: 1px solid var(--white20);
+      cursor: pointer; transition: all 0.2s;
+    }
+    .carousel-arrow:hover { background: rgba(255,255,255,0.2); }
+    .carousel-arrow.disabled { opacity: 0.4; pointer-events: none; }
+    .carousel-arrow img { width: 24px; height: 24px; }
+    .carousel-arrow.prev img { transform: rotate(180deg); }
+
+    /* ════════════════════════════════════════════════════════════════
+       TESTIMONIALS
+    ════════════════════════════════════════════════════════════════ */
+    .testimonials-section {
+      display: flex; flex-direction: column;
+      align-items: center; gap: 40px; width: 100%;
+      position: relative;
+    }
+    .testimonial-bg-orb {
+      position: absolute;
+      left: 50%; top: -100px;
+      transform: translateX(-50%);
+      width: 499px; height: 500px;
+      pointer-events: none; z-index: 0;
+    }
+    .testimonials-section .section-header,
+    .testimonials-section .section-title { position: relative; z-index: 1; }
+
+    .testimonials-carousel-wrap {
+      width: 100%; display: flex; flex-direction: column;
+      align-items: center; gap: 24px;
+      position: relative; z-index: 1;
+    }
+    .testimonials-track-container { width: 100%; overflow: hidden; }
+    .testimonials-track {
+      display: flex; gap: 24px;
+      padding: 0 100px;
+      transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    .testimonial-card {
+      flex-shrink: 0; width: 398px; height: 560px;
+      display: flex; flex-direction: column; gap: 24px;
+      padding: 24px 24px 40px 24px;
+      border-radius: 36px;
+      background: rgba(17,17,17,0.5);
+      border: 1px solid var(--white20);
+      overflow: hidden;
+    }
+    .testimonial-customer { display: flex; flex-direction: column; gap: 16px; height: 365px; }
+    .testimonial-img {
+      border-radius: 16px; overflow: hidden;
+      aspect-ratio: 350/300; width: 100%;
+      background: white;
+      flex-shrink: 0;
+    }
+    .testimonial-img img {
+      width: 100%; height: 100%; object-fit: cover; border-radius: 16px;
+    }
+    .testimonial-info { display: flex; flex-direction: column; gap: 8px; }
+    .testimonial-stars { display: flex; gap: 2px; align-items: center; }
+    .testimonial-stars img { width: 24px; height: 24px; }
+    .testimonial-name {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 24px; line-height: 1.1; letter-spacing: 0.24px;
+      color: #fff; text-transform: lowercase;
+    }
+    .testimonial-quote {
+      font-family: 'Clash Display', sans-serif;
+      font-weight: 500; font-size: 16px;
+      line-height: 1.5; letter-spacing: 0.16px; color: #fff;
+      flex-shrink: 0;
+    }
+
+    /* Testimonials section header - on bright bg so text is dark */
+    .testimonials-section .section-title.dark-text {
+      color: #111 !important;
+      -webkit-text-fill-color: #111 !important;
+      background: none !important;
+    }
+    .testimonials-section .section-subtitle.dark-text { color: #111; }
+
+    /* ════════════════════════════════════════════════════════════════
+       BEATZY LOGO SECTION
+    ════════════════════════════════════════════════════════════════ */
+    .beatzy-logo-section {
+      width: 100%; overflow: hidden;
+    }
+    .beatzy-logo-section img {
+      width: 100%; height: auto; display: block;
+    }
+
+    /* ════════════════════════════════════════════════════════════════
+       FOOTER
+    ════════════════════════════════════════════════════════════════ */
+    .footer-section {
+      position: relative; width: 100%;
+      padding: 40px 100px 140px 100px;
+      overflow: hidden;
+    }
+    .footer-bg-asset {
+      position: absolute;
+      left: 50%; top: -100px;
+      transform: translateX(-50%);
+      width: 2000px; height: 2000px;
+      object-fit: cover; pointer-events: none;
+      z-index: 0; opacity: 0.6;
+    }
+    .footer-container {
+      position: relative; z-index: 1;
+      background: rgba(17,17,17,0.5);
+      border-radius: 36px;
+      padding: 100px;
+      display: flex; flex-direction: column; gap: 24px;
+      max-width: 1240px; margin: 0 auto;
+    }
+    .footer-top {
+      display: flex; align-items: flex-start;
+      justify-content: space-between; width: 100%;
+    }
+    .footer-brand { display: flex; flex-direction: column; gap: 20px; }
+    .footer-logo img { height: 23px; width: auto; }
+    .footer-tagline {
+      font-family: 'Clash Display', sans-serif;
+      font-weight: 500; font-size: 16px;
+      line-height: 1.2; letter-spacing: 0.16px;
+      color: #fff; white-space: nowrap;
+    }
+    .footer-socials { display: flex; gap: 12px; align-items: center; }
+    .social-icon {
+      width: 40px; height: 40px; border-radius: 100px;
+      display: flex; align-items: center; justify-content: center;
+      background: var(--white10); cursor: pointer;
+      transition: background 0.2s;
+    }
+    .social-icon:hover { background: rgba(255,255,255,0.18); }
+    .social-icon img { width: 20px; height: 20px; object-fit: contain; }
+
+    .footer-col { display: flex; flex-direction: column; gap: 16px; }
+    .footer-col-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 24px; line-height: 1.1; letter-spacing: 0.24px;
+      color: #fff;
+    }
+    .footer-nav { display: flex; flex-direction: column; }
+    .footer-nav a {
+      font-family: 'Clash Display', sans-serif;
+      font-weight: 500; font-size: 16px;
+      color: rgba(255,255,255,0.9);
+      padding: 8px 0; height: 36px;
+      display: flex; align-items: center;
+      transition: color 0.2s;
+    }
+    .footer-nav a:hover { color: #fff; }
+    .footer-nav a.active {
+      font-weight: 600; text-decoration: underline; color: #fff;
+    }
+
+    .footer-divider { height: 1px; background: rgba(255,255,255,0.15); width: 100%; }
+
+    .footer-copyright {
+      display: flex; gap: 12px; align-items: center;
+      justify-content: center;
+    }
+    .footer-copyright p {
+      font-family: 'Clash Display', sans-serif;
+      font-weight: 500; font-size: 16px; color: #fff;
+    }
+    .footer-pipe { width: 2px; height: 20px; background: rgba(255,255,255,0.3); }
+
+    /* ════════════════════════════════════════════════════════════════
+       GRADIENT BG STRIP (testimonials section)
+    ════════════════════════════════════════════════════════════════ */
+    .testimonials-bg-gradient {
+      position: absolute;
+      left: -782px; top: 0;
+      width: 3067px; height: 1158px;
+      z-index: -1;
+      transform: rotate(5deg);
+      background: linear-gradient(90deg, #f60190 25%, #9e03aa 75%);
+      pointer-events: none;
+    }
+    .testimonials-outer {
+      position: relative;
+      width: 100%;
+      overflow: hidden;
+    }
+
+    /* ════════════════════════════════════════════════════════════════
+       HOVER ANIMATIONS
+    ════════════════════════════════════════════════════════════════ */
+    @keyframes float {
+      0%, 100% { transform: translateX(-50%) translateY(0px); }
+      50%       { transform: translateX(-50%) translateY(-20px); }
+    }
+    .hero-earbud { animation: float 6s ease-in-out infinite; }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fadein { animation: fadeInUp 0.8s ease forwards; }
+
+    /* ════════════════════════════════════════════════════════════════
+       RESPONSIVE ADJUSTMENTS
+    ════════════════════════════════════════════════════════════════ */
+    @media (max-width: 1440px) {
+      .hero-title    { font-size: clamp(60px, 12vw, 180px); }
+      .hero-subtitle { font-size: clamp(30px, 5.5vw, 80px); top: calc(50% - 40px); }
+    }
+
+  </style>
+</head>
+
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     NAVIGATION
+═══════════════════════════════════════════════════════════════ -->
+<nav id="nav" class="glass-50">
+  <div class="nav-inner">
+    <!-- Logo -->
+    <a href="#" class="nav-logo">
+      <img src="https://www.figma.com/api/mcp/asset/bbd51ce7-18da-4a82-8027-1b52553fe43b" alt="Beatzy" />
+    </a>
+
+    <!-- Links -->
+    <div class="nav-menu">
+      <a href="#"        class="active">Home</a>
+      <a href="#shop">Shop</a>
+      <a href="#support">Support</a>
+      <a href="#contact">Contact</a>
+    </div>
+
+    <!-- Actions -->
+    <div class="nav-actions">
+      <button class="btn-glass btn-glass-dark glass-10">Login</button>
+      <button class="btn-glass btn-glass-white glass-10">Sign Up</button>
+    </div>
+  </div>
+</nav>
+
+
+<!-- ═══════════════════════════════════════════════════════════════
+     HERO SECTION
+═══════════════════════════════════════════════════════════════ -->
+<section class="hero-section">
+  <!-- Background -->
+  <img class="hero-bg"
+       src="https://www.figma.com/api/mcp/asset/81e2e09b-8bd4-4915-a18b-aa678591617a"
+       alt="" />
+  <!-- Overlay -->
+  <img class="hero-overlay"
+       src="https://www.figma.com/api/mcp/asset/790cb3ae-83aa-4167-8f61-41bc66f6044c"
+       alt="" />
+
+  <!-- Text -->
+  <div class="hero-text-container">
+    <div class="hero-headline-wrap">
+      <h1 class="hero-title">Wireless,<br>Limitless.</h1>
+      <p class="hero-subtitle font-electric">Feel the Beat</p>
+    </div>
+  </div>
+
+  <!-- Earbuds -->
+  <img class="hero-earbud"
+       src="https://www.figma.com/api/mcp/asset/2d490c54-1f3f-4b77-b6be-82ba5e69364c"
+       alt="Beatzy Earbuds" />
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════════
+     PAGE CONTENT (all sections below hero)
+═══════════════════════════════════════════════════════════════ -->
+<div class="page-wrapper" style="padding-top:200px;">
+
+  <!-- ───────────────────────────────────────────────────────────
+       PRODUCT FEATURES
+  ─────────────────────────────────────────────────────────────── -->
+  <section class="features-section">
+    <div class="section-header">
+      <h2 class="section-title gradient-text">Choose your sound</h2>
+      <p class="section-subtitle">Fall in love with our sounds, designed for every listener.</p>
+    </div>
+
+    <!-- Feature cards grid -->
+    <div class="features-grid-wrapper">
+
+      <!-- A: Pink comfort card — top-left wide -->
+      <div class="feature-card fc-a">
+        <img class="fc-a-image"
+             src="https://www.figma.com/api/mcp/asset/c33a61ed-f112-42d1-a0bd-affd504c22dc"
+             alt="" />
+        <div class="fc-texts" style="left:40px;top:68px;width:400px;">
+          <h3 class="fc-title" style="text-align:right;">Forget You're Wearing Them All-Day</h3>
+          <p class="fc-desc" style="text-align:right;">Ergonomic design that conforms to your ear for hours of comfortable listening.</p>
+        </div>
+      </div>
+
+      <!-- B: Clean White — left column tall -->
+      <div class="feature-card fc-b">
+        <div class="fc-overlay"></div>
+        <img class="fc-bg"
+             src="https://www.figma.com/api/mcp/asset/a51e46c9-c8ec-48a5-ba00-9d0696b5d142"
+             alt="" />
+        <div class="fc-texts" style="left:24px;top:40px;width:244px;">
+          <h3 class="fc-title">THE CLEAN &amp; CRISP WHITE</h3>
+          <p class="fc-desc">Clean, minimalist design in pristine white.</p>
+        </div>
+      </div>
+
+      <!-- C: Noise Isolation — center card -->
+      <div class="feature-card fc-c">
+        <div class="fc-overlay"></div>
+        <img class="fc-bg"
+             src="https://www.figma.com/api/mcp/asset/b4053d67-f38f-4621-86e8-629e1489f1f1"
+             alt="" />
+        <div class="fc-texts" style="left:40px;top:40px;width:172px;">
+          <h3 class="fc-title">Noise Isolation Pro</h3>
+          <p class="fc-desc">Block out distractions with soft and secure-fit ear tips and active noise cancellation.</p>
+        </div>
+      </div>
+
+      <!-- D: Extended Stem — bottom wide -->
+      <div class="feature-card fc-d">
+        <div class="fc-overlay"></div>
+        <img class="fc-bg"
+             src="https://www.figma.com/api/mcp/asset/6d1ac9e0-caf4-4b68-9d02-530c1a5ffa2a"
+             alt="" style="position:absolute;inset:0;width:137.92%;height:100%;left:-37.79%;object-fit:cover;"/>
+        <img class="fc-d-stem"
+             src="https://www.figma.com/api/mcp/asset/939a9e1c-c4fd-47b4-bc4a-194cc456bc7e"
+             alt="" />
+        <div class="fc-texts" style="left:40px;top:68px;width:480px;">
+          <h3 class="fc-title">AN Extended Stem Design with Enhanced Grip</h3>
+          <p class="fc-desc">With a longer stem for easier handling and touch controls, you get an improved grip design for quick adjustments.</p>
+        </div>
+      </div>
+
+      <!-- E: Classic Black — right column tall -->
+      <div class="feature-card fc-e">
+        <div class="fc-overlay"></div>
+        <img class="fc-bg"
+             src="https://www.figma.com/api/mcp/asset/6a2ea21c-b5f1-4e0e-a91b-d94edab90780"
+             alt="" />
+        <div class="fc-texts" style="left:24px;top:40px;width:244px;">
+          <h3 class="fc-title">THE Classic Black Edition</h3>
+          <p class="fc-desc">Sophisticated matte black finish for a timeless look.</p>
+        </div>
+      </div>
+
+    </div><!-- /features-grid-wrapper -->
+
+    <!-- Shop Now button -->
+    <button class="btn-shop glass-10" onclick="document.getElementById('shop').scrollIntoView({behavior:'smooth'})">
+      Shop Now
+    </button>
+  </section>
+
+
+  <!-- ───────────────────────────────────────────────────────────
+       SPONSOR LOGOS
+  ─────────────────────────────────────────────────────────────── -->
+  <section class="sponsors-section section-full">
+    <p class="sponsors-label">PROUDLY SPONSORED BY:</p>
+    <div class="sponsors-ticker-wrap">
+      <div class="sponsors-ticker-track">
+        <!-- First set -->
+        <img class="sponsor-logo" src="https://www.figma.com/api/mcp/asset/99c1a2b4-c80e-4e91-b48d-42c11ff52ada" alt="sponsor" />
+        <img class="sponsor-logo" src="https://www.figma.com/api/mcp/asset/315228e2-aff4-46a7-bc0a-ba3f09e468b1" alt="sponsor" style="width:62px"/>
+        <img class="sponsor-logo" src="https://www.figma.com/api/mcp/asset/73561ffe-9411-458a-9740-6bda626c3a3d" alt="sponsor" />
+        <img class="sponsor-logo" src="https://www.figma.com/api/mcp/asset/5b707dd2-b972-47c7-a48d-48c943381b91" alt="sponsor" style="width:90px"/>
+        <img class="sponsor-logo" src="https://www.figma.com/api/mcp/asset/58a19b1e-6d5e-4543-840a-4140cc99adcc" alt="sponsor" style="width:56px"/>
+        <img class="sponsor-logo" src="https://www.figma.com/api/mcp/asset/abf53527-c7e4-453b-80f6-5a80c20ba0c4" alt="sponsor" style="width:54px"/>
+        <img class="sponsor-logo" src="https://www.figma.com/api/mcp/asset/12f3c3b1-6e7c-4fd8-9f9c-e498d7c5ddc3" alt="sponsor" style="width:50px"/>
+        <img class="sponsor-logo" src="https://www.figma.com/api/mcp/asset/50c96e2e-dee8-4c8f-8e3d-4ca7f6c067d1" alt="sponsor" style="width:36px"/>
+        <!-- Duplicate for seamless loop -->
+        <img class="sponsor-logo" src="https://www.figma.com/api/mcp/asset/99c1a2b4-c80e-4e91-b48d-42c11ff52ada" alt="sponsor" />
+        <img class="sponsor-logo" src="https://www.figma.com/api/mcp/asset/315228e2-aff4-46a7-bc0a-ba3f09e468b1" alt="sponsor" style="width:62px"/>
+        <img class="sponsor-logo" src="https://www.figma.com/api/mcp/asset/73561ffe-9411-458a-9740-6bda626c3a3d" alt="sponsor" />
+        <img class="sponsor-logo" src="https://www.figma.com/api/mcp/asset/5b707dd2-b972-47c7-a48d-48c943381b91" alt="sponsor" style="width:90px"/>
+        <img class="sponsor-logo" src="https://www.figma.com/api/mcp/asset/58a19b1e-6d5e-4543-840a-4140cc99adcc" alt="sponsor" style="width:56px"/>
+        <img class="sponsor-logo" src="https://www.figma.com/api/mcp/asset/abf53527-c7e4-453b-80f6-5a80c20ba0c4" alt="sponsor" style="width:54px"/>
+        <img class="sponsor-logo" src="https://www.figma.com/api/mcp/asset/12f3c3b1-6e7c-4fd8-9f9c-e498d7c5ddc3" alt="sponsor" style="width:50px"/>
+        <img class="sponsor-logo" src="https://www.figma.com/api/mcp/asset/50c96e2e-dee8-4c8f-8e3d-4ca7f6c067d1" alt="sponsor" style="width:36px"/>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ───────────────────────────────────────────────────────────
+       CUSTOMER FAVORITES (Products Carousel)
+  ─────────────────────────────────────────────────────────────── -->
+  <section id="shop" class="products-section">
+    <div class="section-header">
+      <h2 class="section-title gradient-text">CUSTOMER FAVORITES</h2>
+      <p class="section-subtitle">Our best-sellers, loved by thousands of listeners.</p>
+    </div>
+
+    <div class="products-carousel-wrap">
+      <div class="products-track-container">
+        <div class="products-track" id="products-track">
+
+          <!-- Product 1: ComfortFit Pro -->
+          <div class="product-card glass-2">
+            <div class="product-img-wrap">
+              <img src="https://www.figma.com/api/mcp/asset/b4053d67-f38f-4621-86e8-629e1489f1f1" alt="ComfortFit Pro" />
+            </div>
+            <div class="product-details">
+              <div class="product-texts">
+                <p class="product-name">ComfortFit Pro</p>
+                <p class="product-desc">Ultra-lightweight design that disappears in your ear. Ergonomic contours for all-day comfort.</p>
+              </div>
+              <div class="product-footer">
+                <div class="product-price">
+                  <span class="product-currency">GHS</span>
+                  <span class="product-amount">180.00</span>
+                </div>
+                <button class="product-cart-btn glass-10">
+                  <img src="https://www.figma.com/api/mcp/asset/273a3aac-e495-4525-8d2c-2f880ceaf141" alt="Add to cart" />
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Product 2: Classic Black Edition -->
+          <div class="product-card glass-2">
+            <div class="product-img-wrap">
+              <img src="https://www.figma.com/api/mcp/asset/f8e45340-3168-4c4a-abd0-3be2c043e5a9" alt="Classic Black Edition" />
+            </div>
+            <div class="product-details">
+              <div class="product-texts">
+                <p class="product-name">Classic Black Edition</p>
+                <p class="product-desc">Sleek matte black finish for timeless elegance. Professional style that never goes out of fashion.</p>
+              </div>
+              <div class="product-footer">
+                <div class="product-price">
+                  <span class="product-currency">GHS</span>
+                  <span class="product-amount">200.00</span>
+                </div>
+                <button class="product-cart-btn glass-10">
+                  <img src="https://www.figma.com/api/mcp/asset/273a3aac-e495-4525-8d2c-2f880ceaf141" alt="Add to cart" />
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Product 3: Pure White Edition -->
+          <div class="product-card glass-2">
+            <div class="product-img-wrap">
+              <img src="https://www.figma.com/api/mcp/asset/eefe4a00-9399-4fc3-b8e1-a93ce703832b" alt="Pure White Edition" />
+            </div>
+            <div class="product-details">
+              <div class="product-texts">
+                <p class="product-name">Pure White Edition</p>
+                <p class="product-desc">Clean, minimalist design in pristine white. Modern aesthetic for the contemporary listener.</p>
+              </div>
+              <div class="product-footer">
+                <div class="product-price">
+                  <span class="product-currency">GHS</span>
+                  <span class="product-amount">200.00</span>
+                </div>
+                <button class="product-cart-btn glass-10">
+                  <img src="https://www.figma.com/api/mcp/asset/273a3aac-e495-4525-8d2c-2f880ceaf141" alt="Add to cart" />
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Product 4: GripStem Pro -->
+          <div class="product-card glass-2">
+            <div class="product-img-wrap">
+              <img src="https://www.figma.com/api/mcp/asset/11c7dafe-f3f1-4bff-be3e-eb02694df2da" alt="GripStem Pro" />
+            </div>
+            <div class="product-details">
+              <div class="product-texts">
+                <p class="product-name">GripStem Pro</p>
+                <p class="product-desc">Extended stem for enhanced handling and precise control. Secure grip for active lifestyles.</p>
+              </div>
+              <div class="product-footer">
+                <div class="product-price">
+                  <span class="product-currency">GHS</span>
+                  <span class="product-amount">220.00</span>
+                </div>
+                <button class="product-cart-btn glass-10">
+                  <img src="https://www.figma.com/api/mcp/asset/273a3aac-e495-4525-8d2c-2f880ceaf141" alt="Add to cart" />
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Product 5: ComfortFit Pro (repeat) -->
+          <div class="product-card glass-2">
+            <div class="product-img-wrap">
+              <img src="https://www.figma.com/api/mcp/asset/b4053d67-f38f-4621-86e8-629e1489f1f1" alt="ComfortFit Pro" />
+            </div>
+            <div class="product-details">
+              <div class="product-texts">
+                <p class="product-name">ComfortFit Pro</p>
+                <p class="product-desc">Ultra-lightweight design that disappears in your ear. Ergonomic contours for all-day comfort.</p>
+              </div>
+              <div class="product-footer">
+                <div class="product-price">
+                  <span class="product-currency">GHS</span>
+                  <span class="product-amount">180.00</span>
+                </div>
+                <button class="product-cart-btn glass-10">
+                  <img src="https://www.figma.com/api/mcp/asset/273a3aac-e495-4525-8d2c-2f880ceaf141" alt="Add to cart" />
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Product 6 -->
+          <div class="product-card glass-2">
+            <div class="product-img-wrap">
+              <img src="https://www.figma.com/api/mcp/asset/f8e45340-3168-4c4a-abd0-3be2c043e5a9" alt="Classic Black Edition" />
+            </div>
+            <div class="product-details">
+              <div class="product-texts">
+                <p class="product-name">Classic Black Edition</p>
+                <p class="product-desc">Sleek matte black finish for timeless elegance. Professional style that never goes out of fashion.</p>
+              </div>
+              <div class="product-footer">
+                <div class="product-price">
+                  <span class="product-currency">GHS</span>
+                  <span class="product-amount">200.00</span>
+                </div>
+                <button class="product-cart-btn glass-10">
+                  <img src="https://www.figma.com/api/mcp/asset/273a3aac-e495-4525-8d2c-2f880ceaf141" alt="Add to cart" />
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Product 7 -->
+          <div class="product-card glass-2">
+            <div class="product-img-wrap">
+              <img src="https://www.figma.com/api/mcp/asset/eefe4a00-9399-4fc3-b8e1-a93ce703832b" alt="Pure White Edition" />
+            </div>
+            <div class="product-details">
+              <div class="product-texts">
+                <p class="product-name">Pure White Edition</p>
+                <p class="product-desc">Clean, minimalist design in pristine white. Modern aesthetic for the contemporary listener.</p>
+              </div>
+              <div class="product-footer">
+                <div class="product-price">
+                  <span class="product-currency">GHS</span>
+                  <span class="product-amount">200.00</span>
+                </div>
+                <button class="product-cart-btn glass-10">
+                  <img src="https://www.figma.com/api/mcp/asset/273a3aac-e495-4525-8d2c-2f880ceaf141" alt="Add to cart" />
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Product 8 -->
+          <div class="product-card glass-2">
+            <div class="product-img-wrap">
+              <img src="https://www.figma.com/api/mcp/asset/11c7dafe-f3f1-4bff-be3e-eb02694df2da" alt="GripStem Pro" />
+            </div>
+            <div class="product-details">
+              <div class="product-texts">
+                <p class="product-name">GripStem Pro</p>
+                <p class="product-desc">Extended stem for enhanced handling and precise control. Secure grip for active lifestyles.</p>
+              </div>
+              <div class="product-footer">
+                <div class="product-price">
+                  <span class="product-currency">GHS</span>
+                  <span class="product-amount">220.00</span>
+                </div>
+                <button class="product-cart-btn glass-10">
+                  <img src="https://www.figma.com/api/mcp/asset/273a3aac-e495-4525-8d2c-2f880ceaf141" alt="Add to cart" />
+                </button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Carousel arrows -->
+      <div class="carousel-arrows">
+        <button class="carousel-arrow prev disabled glass-10" id="products-prev" onclick="slideCarousel('products',-1)">
+          <img src="https://www.figma.com/api/mcp/asset/2fd49c9a-1fb0-4b4d-9b89-d3e8436ffe94" alt="prev" />
+        </button>
+        <button class="carousel-arrow next glass-10" id="products-next" onclick="slideCarousel('products',1)">
+          <img src="https://www.figma.com/api/mcp/asset/e90cfc76-e611-464d-bb3c-bf9e97d8ccdc" alt="next" />
+        </button>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ───────────────────────────────────────────────────────────
+       TESTIMONIALS
+  ─────────────────────────────────────────────────────────────── -->
+  <div class="testimonials-outer section-full">
+    <!-- Pink/purple gradient bg strip -->
+    <div class="testimonials-bg-gradient"></div>
+
+    <section class="testimonials-section" id="support">
+      <img class="testimonial-bg-orb"
+           src="https://www.figma.com/api/mcp/asset/dd4a0bfa-378b-4dd6-9ea5-0b9f2c74b095"
+           alt="" />
+
+      <div class="section-header">
+        <h2 class="section-title gradient-text-dark font-electric" style="color:#111;-webkit-text-fill-color:#111;background:none;">What people are saying</h2>
+        <p class="section-subtitle" style="color:#111;">Trusted by thousands of music lovers worldwide</p>
+      </div>
+
+      <div class="testimonials-carousel-wrap">
+        <div class="testimonials-track-container">
+          <div class="testimonials-track" id="testimonials-track">
+
+            <!-- Testimonial 1: Sarah Appiah -->
+            <div class="testimonial-card glass-10">
+              <div class="testimonial-customer">
+                <div class="testimonial-img">
+                  <img src="https://www.figma.com/api/mcp/asset/761c157c-cf05-4cd4-9ee7-82f3fefd9762" alt="Sarah Appiah" />
+                </div>
+                <div class="testimonial-info">
+                  <div class="testimonial-stars">
+                    <img src="https://www.figma.com/api/mcp/asset/e0e221ea-5508-4876-a2ab-dab9e662e270" alt="★" />
+                    <img src="https://www.figma.com/api/mcp/asset/e0e221ea-5508-4876-a2ab-dab9e662e270" alt="★" />
+                    <img src="https://www.figma.com/api/mcp/asset/e0e221ea-5508-4876-a2ab-dab9e662e270" alt="★" />
+                    <img src="https://www.figma.com/api/mcp/asset/e0e221ea-5508-4876-a2ab-dab9e662e270" alt="★" />
+                    <img src="https://www.figma.com/api/mcp/asset/e0e221ea-5508-4876-a2ab-dab9e662e270" alt="★" />
+                  </div>
+                  <p class="testimonial-name">sarah appiah</p>
+                </div>
+              </div>
+              <p class="testimonial-quote">"Bought these for my morning jogs and they've exceeded expectations. Sweatproof, secure fit, and the sound keeps me motivated. Three months in and they still look and work like new. Solid quality."</p>
+            </div>
+
+            <!-- Testimonial 2: Samuel Winston -->
+            <div class="testimonial-card glass-10">
+              <div class="testimonial-customer">
+                <div class="testimonial-img">
+                  <img src="https://www.figma.com/api/mcp/asset/027e5d22-6fc7-4163-be54-d96ccfb6284c" alt="Samuel Winston" />
+                </div>
+                <div class="testimonial-info">
+                  <div class="testimonial-stars">
+                    <img src="https://www.figma.com/api/mcp/asset/e0e221ea-5508-4876-a2ab-dab9e662e270" alt="★" />
+                    <img src="https://www.figma.com/api/mcp/asset/e0e221ea-5508-4876-a2ab-dab9e662e270" alt="★" />
+                    <img src="https://www.figma.com/api/mcp/asset/e0e221ea-5508-4876-a2ab-dab9e662e270" alt="★" />
+                    <img src="https://www.figma.com/api/mcp/asset/e0e221ea-5508-4876-a2ab-dab9e662e270" alt="★" />
+                    <img src="https://www.figma.com/api/mcp/asset/e0e221ea-5508-4876-a2ab-dab9e662e270" alt="★" />
+                  </div>
+                  <p class="testimonial-name">Samuel winston</p>
+                </div>
+              </div>
+              <p class="testimonial-quote">"Best investment for my daily commute. The noise cancellation makes the tro-tro rides bearable, and I can take calls without asking people to repeat themselves. Battery lasts my entire week without charging."</p>
+            </div>
+
+            <!-- Testimonial 3: Bella Darko -->
+            <div class="testimonial-card glass-10">
+              <div class="testimonial-customer">
+                <div class="testimonial-img">
+                  <img src="https://www.figma.com/api/mcp/asset/2e6c5a77-f671-4b5e-83b8-5979f59e95f5" alt="Bella Darko" />
+                </div>
+                <div class="testimonial-info">
+                  <div class="testimonial-stars">
+                    <img src="https://www.figma.com/api/mcp/asset/e0e221ea-5508-4876-a2ab-dab9e662e270" alt="★" />
+                    <img src="https://www.figma.com/api/mcp/asset/e0e221ea-5508-4876-a2ab-dab9e662e270" alt="★" />
+                    <img src="https://www.figma.com/api/mcp/asset/e0e221ea-5508-4876-a2ab-dab9e662e270" alt="★" />
+                    <img src="https://www.figma.com/api/mcp/asset/e0e221ea-5508-4876-a2ab-dab9e662e270" alt="★" />
+                    <img src="https://www.figma.com/api/mcp/asset/e0e221ea-5508-4876-a2ab-dab9e662e270" alt="★" />
+                  </div>
+                  <p class="testimonial-name">bella darko</p>
+                </div>
+              </div>
+              <p class="testimonial-quote">"As a student, I needed something affordable but quality for online lectures. These are perfect—clear audio, comfortable for long study sessions, and the case is compact enough for my bag. No regrets."</p>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Testimonials carousel arrows -->
+        <div class="carousel-arrows">
+          <button class="carousel-arrow prev disabled glass-10" id="testimonials-prev" onclick="slideCarousel('testimonials',-1)">
+            <img src="https://www.figma.com/api/mcp/asset/2fd49c9a-1fb0-4b4d-9b89-d3e8436ffe94" alt="prev" />
+          </button>
+          <button class="carousel-arrow next glass-10" id="testimonials-next" onclick="slideCarousel('testimonials',1)">
+            <img src="https://www.figma.com/api/mcp/asset/e90cfc76-e611-464d-bb3c-bf9e97d8ccdc" alt="next" />
+          </button>
+        </div>
+      </div>
+    </section>
+  </div>
+
+
+  <!-- ───────────────────────────────────────────────────────────
+       BEATZY BIG LOGO
+  ─────────────────────────────────────────────────────────────── -->
+  <div class="beatzy-logo-section section-full">
+    <img src="https://www.figma.com/api/mcp/asset/22c39d83-2e32-40d5-b3b5-19016969a0ef"
+         alt="BEATZY" style="width:100%;height:auto;display:block;" />
+  </div>
+
+
+  <!-- ───────────────────────────────────────────────────────────
+       FOOTER
+  ─────────────────────────────────────────────────────────────── -->
+  <section id="contact" class="footer-section section-full" style="margin-top:0;padding-top:0;">
+    <img class="footer-bg-asset"
+         src="https://www.figma.com/api/mcp/asset/2ed143ab-c84c-4bb9-8809-ab5055b96562"
+         alt="" />
+
+    <div class="footer-container glass-10">
+      <!-- Top section -->
+      <div class="footer-top">
+
+        <!-- Brand column -->
+        <div class="footer-brand">
+          <div class="footer-logo">
+            <img src="https://www.figma.com/api/mcp/asset/bbd51ce7-18da-4a82-8027-1b52553fe43b" alt="Beatzy" />
+          </div>
+          <p class="footer-tagline">Premium wireless earbuds for every lifestyle.</p>
+          <div class="footer-socials">
+            <a href="#" class="social-icon">
+              <img src="https://www.figma.com/api/mcp/asset/78797e1d-9fb1-4c57-81be-f1a774b28541" alt="Email" />
+            </a>
+            <a href="#" class="social-icon">
+              <img src="https://www.figma.com/api/mcp/asset/3cc01c1e-d3ce-4b7d-b503-c072cf6a78bd" alt="WhatsApp" />
+            </a>
+            <a href="#" class="social-icon">
+              <img src="https://www.figma.com/api/mcp/asset/3e693afe-2270-4900-bb14-70f2b29d713f" alt="LinkedIn" />
+            </a>
+            <a href="#" class="social-icon">
+              <img src="https://www.figma.com/api/mcp/asset/9432e397-500f-49e2-bb77-19fad8b55531" alt="Instagram" />
+            </a>
+            <a href="#" class="social-icon">
+              <img src="https://www.figma.com/api/mcp/asset/2a091576-a898-45c8-bb2e-b7b2806ac720" alt="Twitter" />
+            </a>
+          </div>
+        </div>
+
+        <!-- Site Links -->
+        <div class="footer-col">
+          <h4 class="footer-col-title">SITE LINKs</h4>
+          <nav class="footer-nav">
+            <a href="#"        class="active">Home</a>
+            <a href="#shop">Shop</a>
+            <a href="#support">Support</a>
+            <a href="#contact">Contact</a>
+          </nav>
+        </div>
+
+        <!-- Shop -->
+        <div class="footer-col">
+          <h4 class="footer-col-title">SHOP</h4>
+          <nav class="footer-nav">
+            <a href="#">All Products</a>
+            <a href="#">Best Sellers</a>
+            <a href="#">New Arrivals</a>
+            <a href="#">Deals &amp; Offers</a>
+          </nav>
+        </div>
+
+        <!-- Support -->
+        <div class="footer-col">
+          <h4 class="footer-col-title">SUPPORT</h4>
+          <nav class="footer-nav">
+            <a href="#">FAQs</a>
+            <a href="#">Contact Us</a>
+            <a href="#">Shipping Information</a>
+            <a href="#">Returns &amp; Refunds</a>
+            <a href="#">Warranty</a>
+          </nav>
+        </div>
+
+      </div>
+
+      <!-- Divider -->
+      <div class="footer-divider"></div>
+
+      <!-- Copyright -->
+      <div class="footer-copyright">
+        <p>©&nbsp; <span class="gradient-text-pink">Beatzy</span> by Senya</p>
+        <div class="footer-pipe"></div>
+        <p>All Rights Reserved</p>
+      </div>
+    </div>
+  </section>
+
+</div><!-- /page-wrapper -->
+
+
+<!-- ═══════════════════════════════════════════════════════════════
+     JAVASCRIPT
+═══════════════════════════════════════════════════════════════ -->
+<script>
+  /* ── Carousel State ─────────────────────────────────────────── */
+  const carousels = {
+    products: {
+      track: document.getElementById('products-track'),
+      current: 0,
+      itemWidth: 292 + 24, // card width + gap
+      visibleCount: 4,
+      totalItems: 8,
+    },
+    testimonials: {
+      track: document.getElementById('testimonials-track'),
+      current: 0,
+      itemWidth: 398 + 24,
+      visibleCount: 3,
+      totalItems: 3,
+    }
+  };
+
+  function slideCarousel(id, dir) {
+    const c = carousels[id];
+    const max = c.totalItems - c.visibleCount;
+    c.current = Math.max(0, Math.min(c.current + dir, max));
+    c.track.style.transform = `translateX(-${c.current * c.itemWidth}px)`;
+    document.getElementById(`${id}-prev`).classList.toggle('disabled', c.current === 0);
+    document.getElementById(`${id}-next`).classList.toggle('disabled', c.current >= max);
+  }
+
+  /* ── Nav scroll effect ──────────────────────────────────────── */
+  const nav = document.getElementById('nav');
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 40) {
+      nav.style.background = 'rgba(17,17,17,0.85)';
+    } else {
+      nav.style.background = 'rgba(17,17,17,0.15)';
+    }
+  });
+
+  /* ── Intersection Observer for fade-in ──────────────────────── */
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.style.opacity = '1';
+        entry.target.style.transform = 'translateY(0)';
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.product-card, .testimonial-card, .feature-card').forEach(el => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(24px)';
+    el.style.transition = 'opacity 0.6s ease, transform 0.6s ease, box-shadow 0.3s ease';
+    observer.observe(el);
+  });
+
+  /* ── Touch / drag for carousels ─────────────────────────────── */
+  ['products-track', 'testimonials-track'].forEach(trackId => {
+    const track = document.getElementById(trackId);
+    const id = trackId.replace('-track', '');
+    let startX = 0, isDragging = false;
+
+    track.addEventListener('mousedown', e => { startX = e.clientX; isDragging = true; });
+    track.addEventListener('mousemove', e => { if (!isDragging) return; e.preventDefault(); });
+    track.addEventListener('mouseup', e => {
+      if (!isDragging) return;
+      const diff = startX - e.clientX;
+      if (Math.abs(diff) > 50) slideCarousel(id, diff > 0 ? 1 : -1);
+      isDragging = false;
+    });
+    track.addEventListener('mouseleave', () => { isDragging = false; });
+
+    // Touch support
+    track.addEventListener('touchstart', e => { startX = e.touches[0].clientX; }, { passive: true });
+    track.addEventListener('touchend', e => {
+      const diff = startX - e.changedTouches[0].clientX;
+      if (Math.abs(diff) > 50) slideCarousel(id, diff > 0 ? 1 : -1);
+    });
+  });
+</script>
+
+</body>
+</html>
